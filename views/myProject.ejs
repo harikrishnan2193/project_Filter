@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Projects</title>
+  <!-- tailwind cdn -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- fontawsome cdn -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+  <%- include("header") %>
+
+    <div class="text-2xl font-bold m-8">Welcome User</div>
+
+    <div class="card shadow ml-3 w-2/3 mx-auto mb-16">
+      <div class="bg-white rounded-lg shadow-lg">
+        <div class="flex justify-between mt-2 mb-2 p-4">
+          <h3 class="text-green-600 text-2xl font-semibold">My Project</h3>
+          <div>
+            <!-- Project Button -->
+            <button id="openModalBtn" class="bg-green-600 text-white px-4 py-2 rounded">Add Project</button>
+
+            <!-- Add Project Modal -->
+            <div id="addProjectModal"
+              class="fixed inset-0 bg-black bg-opacity-65 flex items-center justify-center hidden">
+              <div class="bg-white p-8 rounded-lg shadow-lg w-1/2">
+                <span id="closeAddModalBtn"
+                  class="absolute top-2 right-4 text-2xl cursor-pointer text-white">&times;</span>
+
+                <!-- new.js -->
+                <%- include('new') %>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <% projects.forEach(project=> { %>
+          <div class="mt-4">
+            <div class="border flex items-center rounded-lg p-4 m-3 bg-gray-100">
+              <h5 class="text-lg font-medium">
+                <%= project.title %>
+              </h5>
+
+              <div class="ml-auto flex space-x-3 ">
+
+                <!-- Project Status -->
+                <!-- Project Status -->
+                <div class="ml-auto">
+                  <%= project.project_status %>
+                </div>
+
+                <!-- Edit Button -->
+                <button class="text-blue-600" id="editBtn<%= project.id %>">
+                  <i class="fas fa-edit"></i>
+                </button>
+
+                <!-- Edit Project Modal -->
+                <div id="editProjectModal<%= project.id %>"
+                  class="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center hidden z-50 ">
+                  <div class="bg-white p-8 rounded-lg shadow-lg w-1/2 ">
+                    <span id="closeEditModalBtn<%= project.id %>"
+                      class="absolute top-2 right-4 text-2xl cursor-pointer text-white">&times;</span>
+
+                    <!-- edit.ejs -->
+                    <%- include('edit', { project: project }) %>
+                  </div>
+                </div>
+
+                <!-- Delete Button -->
+                <form action="/projects/<%= project.id %>?_method=DELETE" method="POST" class="inline-block">
+                  <button type="submit" class="text-red-600 hover:text-red-800">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <%- include("footer") %>
+
+      <script>
+        // Js to open and close the Add Project modal
+        const openModalBtn = document.getElementById('openModalBtn');
+        const addProjectModal = document.getElementById('addProjectModal');
+        const closeAddModalBtn = document.getElementById('closeAddModalBtn');
+
+        // Open Add Project modal
+        openModalBtn.addEventListener('click', () => {
+          addProjectModal.classList.remove('hidden');
+        });
+
+        // Close Add Project modal
+        closeAddModalBtn.addEventListener('click', () => {
+          addProjectModal.classList.add('hidden');
+        });
+
+        // Close Add Project modal if clicked outside
+        window.addEventListener('click', (event) => {
+          if (event.target === addProjectModal) {
+            addProjectModal.classList.add('hidden');
+          }
+        });
+
+        // Js to open and close the Edit Project modals
+        const editBtns = document.querySelectorAll('[id^="editBtn"]');
+        editBtns.forEach(btn => {
+          const projectId = btn.id.replace('editBtn', '');
+          const editProjectModal = document.getElementById(`editProjectModal${projectId}`);
+          const closeEditModalBtn = document.getElementById(`closeEditModalBtn${projectId}`);
+
+          // Open Edit Project modal
+          btn.addEventListener('click', () => {
+            editProjectModal.classList.remove('hidden');
+          });
+
+          // Close Edit Project modal
+          closeEditModalBtn.addEventListener('click', () => {
+            editProjectModal.classList.add('hidden');
+          });
+
+          // Close Edit Project modal if clicked outside
+          window.addEventListener('click', (event) => {
+            if (event.target === editProjectModal) {
+              editProjectModal.classList.add('hidden');
+            }
+          });
+        });
+      </script>
+</body>
+
+</html>
